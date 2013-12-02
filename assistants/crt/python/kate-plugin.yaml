@@ -2,30 +2,117 @@ kate-plugin:
   fullname: Kate/Python Plugin
   description: Create a sample kate/pate plugin
 
+
   files:
     py: &py
-      source: sample.py
+      source: kate_plugin.py.tpl
+      output: '{}.py'
     ui: &ui
-      source: sample_ui.rc
+      source: kate_plugin_ui.rc.tpl
+      output: '{}_ui.rc'
     desktop: &desktop
-      source: katepate_sample.desktop
+      source: kate_plugin.desktop.tpl
+      output: 'katepate_{}.desktop'
+    fixer: &fixer
+      source: squeeze.awk
+
 
   args:
     name:
-      flags: [-n, --name]
+      flags: [ -n, --name ]
       help: human readable plugin name
       required: true
+
     fname:
-      flags: [-f, --fname]
+      flags: [ -m, --fname ]
       help: file name for the plugin (will be generated from `name` if ommited)
 
-  run:
-    - $lowername: $(basename "$name" | tr '[A-Z] ' '[a-z]_')
-    - $curdir: $(pwd)
-    - log_i: Generate required plugin files at $curdir
-    - cl_f: cp *py $curdir/$lowername.py
-    - cl_f: cp *ui $curdir/${lowername}_ui.rc
-    - cl_f: cp *desktop $curdir/katepate_$lowername.desktop
+    destination:
+      flags: [ -p, --destination ]
+      help: directory to generate plugin files
+      default: .
+      nargs: '?'
 
+    overwrite:
+      flags: [ -f, --force ]
+      help: overwrite destination/generated file if exists
+      action: store_true
+
+    view_events:
+      flags: [ -w, --view-handler ]
+      help: view events to handle (signal name of KTextEditor::View)
+      nargs: '+'
+
+    doc_events:
+      flags: [ -d, --doc-handler ]
+      help: document events to handle (signal name of KTextEditor::Documents)
+      nargs: '+'
+
+    lu_handlers:
+      flags: [ -l, --lu-handlers ]
+      help: define load/unload handlers for a plugin
+      action: store_true
+
+    action:
+      flags: [ -a, --action ]
+      help: add sample action
+
+    py2compat:
+      flags: [ --python2-compat ]
+      help: mark a plugin as Python2 compatible
+      action: store_true
+
+    py2only:
+      flags: [ --python2-only ]
+      help: mark a plugin as Python2 only (imply --python2-compat)
+      action: store_true
+
+
+  run:
+    - if $(test -z "$fname"):
+      - $fname: $(basename "$name" | tr '[A-Z] ' '[a-z]_')
+
+    - if $(test -z "$destination" -o "$destination" = '.'):
+      - $destination: $(pwd)
+
+    - log_i: Generate '$name' plugin files at $destination [fn=$fname, load=$lu_handlers]
+
+    - $data2render:
+        - name: $name
+        - output: $fname
+          # BUG Using $lu_handlers leave 'load' key ALWAYS empty!
+          # (even if -l option was used and log_i above shows that $lu_handlers is True)!!!
+          # So, here is a workaround! (DAMN UGLY WORKAROUND!)
+        - load: $(echo "${lu_handlers}")
+        - action: $action
+        - view_handlers: $view_handler
+        - doc_handlers: $doc_handler
+        - python2_compat: $(echo "${python2_compat}")
+        - python2_only: $(echo "${python2_only}")
+
+    - jinja_render:
+      - template: *py
+      - destination: $destination
+      - overwrite: $(echo "${force}")
+      - data: $data2render
+
+    - jinja_render:
+      - template: *desktop
+      - destination: $destination
+      - overwrite: $(echo "${force}")
+      - data: $data2render
+
+    - if $action:
+      - jinja_render:
+        - template: *ui
+        - destination: $destination
+        - overwrite: $(echo "${force}")
+        - data: $data2render
+
+    # Squeeze empty lines in generated .py
+    - $py: $(echo "${destination}/${fname}.py")
+    - $tmp: $(echo "${py}.tmp")
+    - cl_f: awk -f *fixer $py > $tmp
+    - cl_f: mv -f $tmp $py
 
 # kate: space-indent true; indent-width 2; tab-width 2;

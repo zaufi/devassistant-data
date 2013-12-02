@@ -13,7 +13,6 @@ TODO
 * various assistants I have uncertain ideas about:
     * kate/pate plugin creator
     * kate/C++ plugin creator
-    * 
     * kickstart for cmake based C++ project
     * modifiers for cmake projects: 
         * add new `CMakeLists.txt` and update parent lists w/ `add_subdirectory()`

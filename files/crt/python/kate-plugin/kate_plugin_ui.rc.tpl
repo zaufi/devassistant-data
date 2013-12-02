@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE kpartgui>
-<gui name="sample-plugin"
+<gui name="{{ output }}"
      version="1"
      xmlns="http://www.kde.org/standards/kxmlgui/1.0"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,10 +8,11 @@
                          http://www.kde.org/standards/kxmlgui/1.0/kxmlgui.xsd">
     <MenuBar>
         <Menu name="pate"><text>&amp;Pate</text>
-            <Action name="sample_action"
-                    text="Sample Action"
-                    shortcut="Meta+S"
-                    whatsthis="Help text for sample action"
+            <!-- NOTE Also consider to add (some of) the following attributes:
+                'shortcut', 'icon', 'whatsThis', 'toolTip', 'iconText', 'priority'
+                -->
+            <Action name="{{ action }}"
+                    text="{{ action | title }}"
                     group="bottom_tools_operations" />
         </Menu>
     </MenuBar>

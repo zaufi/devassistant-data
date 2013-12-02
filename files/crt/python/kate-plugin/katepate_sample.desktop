@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Service
-ServiceTypes=Kate/PythonPlugin
-X-KDE-Library=sample
-Name=Sample
-Comment=Sample plugin
