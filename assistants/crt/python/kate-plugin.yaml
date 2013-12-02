@@ -1,0 +1,31 @@
+kate-plugin:
+  fullname: Kate/Python Plugin
+  description: Create a sample kate/pate plugin
+
+  files:
+    py: &py
+      source: sample.py
+    ui: &ui
+      source: sample_ui.rc
+    desktop: &desktop
+      source: katepate_sample.desktop
+
+  args:
+    name:
+      flags: [-n, --name]
+      help: human readable plugin name
+      required: true
+    fname:
+      flags: [-f, --fname]
+      help: file name for the plugin (will be generated from `name` if ommited)
+
+  run:
+    - $lowername: $(basename "$name" | tr '[A-Z] ' '[a-z]_')
+    - $curdir: $(pwd)
+    - log_i: Generate required plugin files at $curdir
+    - cl_f: cp *py $curdir/$lowername.py
+    - cl_f: cp *ui $curdir/${lowername}_ui.rc
+    - cl_f: cp *desktop $curdir/katepate_$lowername.desktop
+
+
+# kate: space-indent true; indent-width 2; tab-width 2;
