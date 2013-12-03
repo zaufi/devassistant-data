@@ -3,6 +3,6 @@ python:
   description: This is base Python assistant, you have to choose a specific project type.
 
   dependencies:
-  - rpm: ['python${py3}']
+    - rpm: ['python${py3}']
 
   # TODO What about other (non-RPM) distros?

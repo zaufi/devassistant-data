@@ -20,3 +20,4 @@ TODO
         * add new cmake/chewy module
         * generate new `.cc`/`.hh` file
     * various ebuild starters: cmake based, distutils-r1, -scm(git)
+* tests for all assistants (need to develop some framework?)

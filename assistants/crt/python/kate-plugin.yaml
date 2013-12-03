@@ -28,15 +28,10 @@ kate-plugin:
       help: file name for the plugin (will be generated from `name` if ommited)
 
     destination:
-      flags: [ -p, --destination ]
-      help: directory to generate plugin files
-      default: .
-      nargs: '?'
+      use: generic_args
 
-    overwrite:
-      flags: [ -f, --force ]
-      help: overwrite destination/generated file if exists
-      action: store_true
+    force:
+      use: generic_args
 
     view_events:
       flags: [ -w, --view-handler ]
@@ -72,14 +67,15 @@ kate-plugin:
     - if $(test -z "$fname"):
       - $fname: $(basename "$name" | tr '[A-Z] ' '[a-z]_')
 
-    - if $(test -z "$destination" -o "$destination" = '.'):
+    - if $(test -z "$path" -o "$path" = '.'):
       - $destination: $(pwd)
+    - else:
+      - $destination: $(echo "${path}")
 
     - log_i: Generate '$name' plugin files at $destination [fn=$fname, load=$lu_handlers]
 
     - $data2render:
         - name: $name
-        - output: $fname
           # BUG Using $lu_handlers leave 'load' key ALWAYS empty!
           # (even if -l option was used and log_i above shows that $lu_handlers is True)!!!
           # So, here is a workaround! (DAMN UGLY WORKAROUND!)
@@ -92,12 +88,14 @@ kate-plugin:
 
     - jinja_render:
       - template: *py
+      - output: $fname
       - destination: $destination
       - overwrite: $(echo "${force}")
       - data: $data2render
 
     - jinja_render:
       - template: *desktop
+      - output: $fname
       - destination: $destination
       - overwrite: $(echo "${force}")
       - data: $data2render
@@ -105,6 +103,7 @@ kate-plugin:
     - if $action:
       - jinja_render:
         - template: *ui
+        - output: $fname
         - destination: $destination
         - overwrite: $(echo "${force}")
         - data: $data2render

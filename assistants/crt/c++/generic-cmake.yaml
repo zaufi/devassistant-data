@@ -1,0 +1,192 @@
+generic-cmake-app:
+  fullname: Generic CMake based project
+  description: Kickstart a C++ CMake project
+
+
+  dependencies:
+    - rpm: [ 'cmake' ]
+    #- pip: [ 'chewy' ]
+    # TODO Anything else?
+
+
+  files:
+    root: &root
+      source: CMakeLists.txt.tpl
+      output: CMakeLists.txt
+    required: &required
+      source: required/*
+    autogen: &autogen
+      source: autogen/*
+    custom_license: &custom_license
+      source: copyright_header.lic
+    doxygen: &doxygen
+      source: doxygen/*
+    headers_checker: &headers_checker
+      source: headers_checker/*
+    tests: &tests
+      source: tests/boost/*
+
+
+  args:
+    name:
+      flags: [ -n, --name ]
+      help: Project name to kickstart
+      required: true
+
+    upname:
+      flags: [ -u, --upcase-name ]
+      help: Name used for various MACRO definitions, like package version.
+            Will be generated from package name if ommited.
+      default:
+      nargs: '?'
+
+    force:
+      use: generic_args
+
+    destination:
+      use: generic_args
+
+    namespace:
+      flags: [ -s, --namespace ]
+      help: Default (vendor) namespace
+      required: True
+
+    owner:
+      flags: [ -o, --owner ]
+      help: Project owner
+
+    contact:
+      flags: [ -c, --contact ]
+      help: Project owner contact info (email)
+
+    license:
+      flags: [ -l, --license ]
+      help: One of a standard abbreviations (GPL, LGPL, BSD, & etc), or CUSTOM
+      default: GPL
+      nargs: '?'
+
+    boost_libs:
+      flags: [ -b, --boost-lib ]
+      help: Add finder for boost libraries
+      nargs: '+'
+
+    unit_tests:
+      flags: [ -t, --unit-tests ]
+      help: Add support for unit tests (nowadays only boost supported)
+      default: boost
+      nargs: '?'
+
+    doxygen:
+      flags: [ -x, --doxygen ]
+      help: Use doxygen
+      action: store_true
+
+    cxx11:
+      flags: [ --cxx11 ]
+      help: Enable C++11 for a project
+      action: store_true
+
+    autogen:
+      flags: [ -a, --autogen ]
+      help: Add support for sekeleton .cc/.hh files generation using GNU Autogen
+      action: store_true
+
+    cmp0002:
+      flags: [ --cmp0002 ]
+      help: Turn CMP0002 policy to OLD state for this project
+      action: store_true
+
+    export:
+      flags: [ --export-header ]
+      help: Use exports header (symbols visibility control)
+      action: store_true
+
+    debs:
+      flags: [ --cpack-debs ]
+      help: Add support for .deb files producing
+      action: store_true
+
+    headers_checker:
+      flags: [ --headers_checker ]
+      help: Add target to check headers self-suffiency
+      action: store_true
+
+    pch:
+      flags: [ --pch ]
+      help: Add support for precompiled header
+
+
+  run:
+    - if $(test -z "$path" -o "$path" = '.'):
+      - $destination: $(pwd)
+    - else:
+      - $destination: $(echo "${path}")
+
+    - log_i: Create infrastructure for CMake based project at $destination
+
+    - if $(test "${license}" = 'CUSTOM'):
+      - cl_f: cp *custom_license "${destination}"
+      - $license: $(echo 'copyright_header.lic')
+
+    - if $(test -z "${unit_test}" -o "${unit_test}" = 'boost'):
+      - $tests: $(echo True)
+
+    - $data2render:
+        - name: $name
+        - upname: $upcase_name
+        - owner: $owner
+        - owner_contact: $contact
+        - license: $(echo "${license}")
+        - this_year: $(date '+%G')
+        - vendor_namespace: $namespace
+        - boost_libs: $boost_lib
+        - tests: $tests
+        - pch: $pch
+        - doxygen: $(echo "${doxygen}")
+        - autogen: $(echo "${autogen}")
+        - cxx11: $(echo "${cxx11}")
+        - cmp0002: $(echo "${cmp0002}")
+        - export: $(echo "${export_header}")
+        - cpack: $(echo "${cpack_debs}")
+        - headers_checker: $(echo "${headers_checker}")
+
+    - jinja_render:
+      - template: *root
+      - destination: $destination
+      - overwrite: $(echo "${force}")
+      - data: $data2render
+
+    # Copy required CMake modules
+    - cl_f: mkdir -p "${destination}"/cmake/modules
+    - cl_f: cp -f *required "${destination}"/cmake/modules
+    - if $headers_checker:
+      - cl_f: cp -f *headers_checker "${destination}"/cmake/modules
+    - if $doxygen:
+      - cl_f: cp -f *doxygen "${destination}"/cmake/modules
+    - if $autogen:
+      - cl_f: cp -f *autogen "${destination}"/cmake/modules
+    - if $pch:
+      - cl_f: cp -f *pch "${destination}"/cmake/modules
+    - if $cpack:
+      - cl_f: cp -f *cpack "${destination}"/cmake/modules
+    - if $tests:
+      - cl_i: cp -f *tests "${destination}"/cmake/modules
+
+    - dda_c: $destination
+
+    - log_i: "TODO list:"
+    - if $(test -n "${doxygen}" -a ! -e ~/.cache/doxygen/libstdc++.tag):
+      # TODO Use wget to get? :) Need to ask before?
+      - log_i: "  Download libstdc++ tag file from http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/ into ~/.cache/doxygen/"
+    - if $boost_libs:
+      - log_i: "  Set proper boost version in project's"
+    - if $cpack_debs:
+      - log_i: "  Uncomment and configure .deb package sign/deploy code"
+      - log_i: "  Fix .deb package base-name"
+    - if $autogen:
+      - log_i: "  Remove USE_PRAGMA_ONCE for old compilers"
+
+    - log_i: "Hint: find the 'TODO' string in CMakeLists.txt"
+
+
+# kate: space-indent true; indent-width 2; tab-width 2;

@@ -1,0 +1,14 @@
+args:
+  force:
+    flags: [ -f, --force ]
+    help: overwrite destination/generated file(s) if exists
+    action: store_true
+
+  destination:
+    flags: [ -p, --path ]
+    help: directory to generate files
+    default: .
+    nargs: '?'
+
+
+# kate: space-indent true; indent-width 2; tab-width 2;
