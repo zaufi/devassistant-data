@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 ServiceTypes=Kate/PythonPlugin
-X-KDE-Library={{ output }}
+X-KDE-Library={{ module_name }}
 Name={{ name }}
 Comment=Longer description for {{ name }}
 {% if python2_compat or python2_only %}

@@ -6,13 +6,10 @@ kate-plugin:
   files:
     py: &py
       source: kate_plugin.py.tpl
-      output: '{}.py'
     ui: &ui
       source: kate_plugin_ui.rc.tpl
-      output: '{}_ui.rc'
     desktop: &desktop
       source: kate_plugin.desktop.tpl
-      output: 'katepate_{}.desktop'
     fixer: &fixer
       source: squeeze.awk
 
@@ -75,27 +72,28 @@ kate-plugin:
     - log_i: Generate '$name' plugin files at $destination [fn=$fname, load=$lu_handlers]
 
     - $data2render:
-        - name: $name
-          # BUG Using $lu_handlers leave 'load' key ALWAYS empty!
-          # (even if -l option was used and log_i above shows that $lu_handlers is True)!!!
-          # So, here is a workaround! (DAMN UGLY WORKAROUND!)
-        - load: $(echo "${lu_handlers}")
-        - action: $action
-        - view_handlers: $view_handler
-        - doc_handlers: $doc_handler
-        - python2_compat: $(echo "${python2_compat}")
-        - python2_only: $(echo "${python2_only}")
+        name: $name
+        module_name: $fname
+        # BUG Using $lu_handlers leave 'load' key ALWAYS empty!
+        # (even if -l option was used and log_i above shows that $lu_handlers is True)!!!
+        # So, here is a workaround! (DAMN UGLY WORKAROUND!)
+        load: $(echo "${lu_handlers}")
+        action: $action
+        view_handlers: $view_handler
+        doc_handlers: $doc_handler
+        python2_compat: $(echo "${python2_compat}")
+        python2_only: $(echo "${python2_only}")
 
     - jinja_render:
       - template: *py
-      - output: $fname
+      - output: $(echo "${fname}.py")
       - destination: $destination
       - overwrite: $(echo "${force}")
       - data: $data2render
 
     - jinja_render:
       - template: *desktop
-      - output: $fname
+      - output: $(echo "katepate_${fname}.desktop")
       - destination: $destination
       - overwrite: $(echo "${force}")
       - data: $data2render
@@ -103,7 +101,7 @@ kate-plugin:
     - if $action:
       - jinja_render:
         - template: *ui
-        - output: $fname
+        - output: $(echo "${fname}_ui.rc")
         - destination: $destination
         - overwrite: $(echo "${force}")
         - data: $data2render
@@ -111,7 +109,7 @@ kate-plugin:
     # Squeeze empty lines in generated .py
     - $py: $(echo "${destination}/${fname}.py")
     - $tmp: $(echo "${py}.tmp")
-    - cl_f: awk -f *fixer $py > $tmp
-    - cl_f: mv -f $tmp $py
+    - cl_f: awk -f *fixer "${py}" > "${tmp}"
+    - cl_f: mv -f "${tmp}" "${py}"
 
 # kate: space-indent true; indent-width 2; tab-width 2;

@@ -12,7 +12,6 @@ generic-cmake-app:
   files:
     root: &root
       source: CMakeLists.txt.tpl
-      output: CMakeLists.txt
     required: &required
       source: required/*
     autogen: &autogen
@@ -132,23 +131,23 @@ generic-cmake-app:
       - $tests: $(echo True)
 
     - $data2render:
-        - name: $name
-        - upname: $upcase_name
-        - owner: $owner
-        - owner_contact: $contact
-        - license: $(echo "${license}")
-        - this_year: $(date '+%G')
-        - vendor_namespace: $namespace
-        - boost_libs: $boost_lib
-        - tests: $tests
-        - pch: $pch
-        - doxygen: $(echo "${doxygen}")
-        - autogen: $(echo "${autogen}")
-        - cxx11: $(echo "${cxx11}")
-        - cmp0002: $(echo "${cmp0002}")
-        - export: $(echo "${export_header}")
-        - cpack: $(echo "${cpack_debs}")
-        - headers_checker: $(echo "${headers_checker}")
+        name: $name
+        upname: $upcase_name
+        owner: $owner
+        owner_contact: $contact
+        license: $(echo "${license}")
+        this_year: $(date '+%G')
+        vendor_namespace: $namespace
+        boost_libs: $boost_lib
+        tests: $tests
+        pch: $pch
+        doxygen: $(echo "${doxygen}")
+        autogen: $(echo "${autogen}")
+        cxx11: $(echo "${cxx11}")
+        cmp0002: $(echo "${cmp0002}")
+        export: $(echo "${export_header}")
+        cpack: $(echo "${cpack_debs}")
+        headers_checker: $(echo "${headers_checker}")
 
     - jinja_render:
       - template: *root

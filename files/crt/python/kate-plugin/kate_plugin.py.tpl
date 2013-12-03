@@ -3,7 +3,7 @@
 # Kate/Pâté plugin: {{ name }}
 #
 # NOTE Name of this python module must be specified as X-KDE-Library property
-# of katepate_{{ output }}.desktop file!
+# of katepate_{{ module_name }}.desktop file!
 #
 
 import kate
@@ -12,7 +12,7 @@ import kate
 @kate.action
 def {{ action }}():
     # ATTENTION Function name must be the same as the
-    # `name' attribute of an `Action' element in the {{ output }}_ui.rc file!
+    # `name' attribute of an `Action' element in the {{ module_name }}_ui.rc file!
     pass
 
 

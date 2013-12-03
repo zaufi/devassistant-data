@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE kpartgui>
-<gui name="{{ output }}"
+<gui name="{{ module_name }}"
      version="1"
      xmlns="http://www.kde.org/standards/kxmlgui/1.0"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -11,8 +11,8 @@
             <!-- NOTE Also consider to add (some of) the following attributes:
                 'shortcut', 'icon', 'whatsThis', 'toolTip', 'iconText', 'priority'
                 -->
-            <Action name="{{ action }}"
-                    text="{{ action | title }}"
+            <Action name="{{ action | replace(' ', '') }}"
+                    text="{{ action }}"
                     group="bottom_tools_operations" />
         </Menu>
     </MenuBar>
