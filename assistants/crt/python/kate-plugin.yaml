@@ -85,26 +85,26 @@ kate-plugin:
         python2_only: $(echo "${python2_only}")
 
     - jinja_render:
-      - template: *py
-      - output: $(echo "${fname}.py")
-      - destination: $destination
-      - overwrite: $(echo "${force}")
-      - data: $data2render
+        template: *py
+        output: $(echo "${fname}.py")
+        destination: $destination
+        overwrite: $(echo "${force}")
+        data: $data2render
 
     - jinja_render:
-      - template: *desktop
-      - output: $(echo "katepate_${fname}.desktop")
-      - destination: $destination
-      - overwrite: $(echo "${force}")
-      - data: $data2render
+        template: *desktop
+        output: $(echo "katepate_${fname}.desktop")
+        destination: $destination
+        overwrite: $(echo "${force}")
+        data: $data2render
 
     - if $action:
       - jinja_render:
-        - template: *ui
-        - output: $(echo "${fname}_ui.rc")
-        - destination: $destination
-        - overwrite: $(echo "${force}")
-        - data: $data2render
+          template: *ui
+          output: $(echo "${fname}_ui.rc")
+          destination: $destination
+          overwrite: $(echo "${force}")
+          data: $data2render
 
     # Squeeze empty lines in generated .py
     - $py: $(echo "${destination}/${fname}.py")

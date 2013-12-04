@@ -130,30 +130,28 @@ generic-cmake-app:
     - if $(test -z "${unit_test}" -o "${unit_test}" = 'boost'):
       - $tests: $(echo True)
 
-    - $data2render:
-        name: $name
-        upname: $upcase_name
-        owner: $owner
-        owner_contact: $contact
-        license: $(echo "${license}")
-        this_year: $(date '+%G')
-        vendor_namespace: $namespace
-        boost_libs: $boost_lib
-        tests: $tests
-        pch: $pch
-        doxygen: $(echo "${doxygen}")
-        autogen: $(echo "${autogen}")
-        cxx11: $(echo "${cxx11}")
-        cmp0002: $(echo "${cmp0002}")
-        export: $(echo "${export_header}")
-        cpack: $(echo "${cpack_debs}")
-        headers_checker: $(echo "${headers_checker}")
-
     - jinja_render:
-      - template: *root
-      - destination: $destination
-      - overwrite: $(echo "${force}")
-      - data: $data2render
+        template: *root
+        destination: $destination
+        overwrite: $(echo "${force}")
+        data:
+          name: $name
+          upname: $upcase_name
+          owner: $owner
+          owner_contact: $contact
+          license: $(echo "${license}")
+          this_year: $(date '+%G')
+          vendor_namespace: $namespace
+          boost_libs: $boost_lib
+          tests: $tests
+          pch: $pch
+          doxygen: $(echo "${doxygen}")
+          autogen: $(echo "${autogen}")
+          cxx11: $(echo "${cxx11}")
+          cmp0002: $(echo "${cmp0002}")
+          export: $(echo "${export_header}")
+          cpack: $(echo "${cpack_debs}")
+          headers_checker: $(echo "${headers_checker}")
 
     # Copy required CMake modules
     - cl_f: mkdir -p "${destination}"/cmake/modules
@@ -178,7 +176,7 @@ generic-cmake-app:
       # TODO Use wget to get? :) Need to ask before?
       - log_i: "  Download libstdc++ tag file from http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/ into ~/.cache/doxygen/"
     - if $boost_libs:
-      - log_i: "  Set proper boost version in project's"
+      - log_i: "  Set proper boost version to find"
     - if $cpack_debs:
       - log_i: "  Uncomment and configure .deb package sign/deploy code"
       - log_i: "  Fix .deb package base-name"
