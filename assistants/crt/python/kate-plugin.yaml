@@ -3,6 +3,12 @@ kate-plugin:
   description: Create a sample kate/pate plugin
 
 
+  dependencies:
+    # NOTE This assistant helps to kickstart a new-style kate plugins!
+    # Nowadays this code available only form the master branch of the kate.git!
+    - ebuild: ['>kate-4.12']
+
+
   files:
     py: &py
       source: kate_plugin.py.tpl

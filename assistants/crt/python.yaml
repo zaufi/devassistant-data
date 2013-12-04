@@ -4,5 +4,6 @@ python:
 
   dependencies:
     - rpm: ['python${py3}']
+    - ebuild: ['python']
 
   # TODO What about other (non-RPM) distros?

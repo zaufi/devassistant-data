@@ -5,8 +5,9 @@ generic-cmake-app:
 
   dependencies:
     - rpm: [ 'cmake' ]
+    - ebuild: ['>=cmake-2.6']
     #- pip: [ 'chewy' ]
-    # TODO Anything else?
+    # TODO Anything else? ... like conditionally used libs/tools ...
 
 
   files:
@@ -35,7 +36,7 @@ generic-cmake-app:
     upname:
       flags: [ -u, --upcase-name ]
       help: Name used for various MACRO definitions, like package version.
-            Will be generated from package name if ommited.
+            Will be generated from package name if omitted.
       default:
       nargs: '?'
 
@@ -107,12 +108,12 @@ generic-cmake-app:
 
     headers_checker:
       flags: [ --headers_checker ]
-      help: Add target to check headers self-suffiency
+      help: Add target to check headers self-sufficiency
       action: store_true
 
     pch:
       flags: [ --pch ]
-      help: Add support for precompiled header
+      help: Add support for pre-compiled header
 
 
   run:
@@ -172,7 +173,7 @@ generic-cmake-app:
     - dda_c: $destination
 
     - log_i: "TODO list:"
-    - if $(test -n "${doxygen}" -a ! -e ~/.cache/doxygen/libstdc++.tag):
+    - if $(test -n "${doxygen}" -a ! -e "~/.cache/doxygen/libstdc++.tag"):
       # TODO Use wget to get? :) Need to ask before?
       - log_i: "  Download libstdc++ tag file from http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/ into ~/.cache/doxygen/"
     - if $boost_libs:
