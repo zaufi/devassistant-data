@@ -59,7 +59,7 @@ include(GenerateExportHeader)
 #---------------------------------------------------------
 # Section: Find used stuff
 #---------------------------------------------------------
-{% if boost_libs %}
+{% if boost_libs or tests %}
 set(Boost_USE_MULTITHREADED ON)
 find_package(
     # TODO Set desired boost version
