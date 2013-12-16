@@ -5,7 +5,7 @@ generic-cmake-app:
 
   dependencies:
     - rpm: [ 'cmake' ]
-    - ebuild: ['>=cmake-2.6']
+    - ebuild: ['>=dev-util/cmake-2.6']
     #- pip: [ 'chewy' ]
     # TODO Anything else? ... like conditionally used libs/tools ...
 
